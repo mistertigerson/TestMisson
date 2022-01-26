@@ -1,10 +1,6 @@
 package com.example.testmisson.ui.main
 
-import android.annotation.SuppressLint
-import android.content.ContentValues.TAG
 import android.content.Context
-import android.opengl.Visibility
-import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -19,74 +15,65 @@ import com.example.testmisson.databinding.ActivityMainBinding
 class MainViewModel : ViewModel() {
 
     var animal: MutableList<Animal> = mutableListOf()
-    var animals: MutableList<Animal> = mutableListOf()
-    var item: Int = 0
-    var id: Int = 0
+    var randomAnimals: MutableList<Animal> = mutableListOf()
 
 
-    //создание листа
+    //при нажатии кнопки старт, создается лист из рандомных животных и их количество
     fun onCreateList(binding: ActivityMainBinding, context: Context) {
+        binding.ll.removeAllViews()
+        animal.clear()
         var input: Int = Integer.parseInt(binding.etNumber.text.toString())
-            for (i in 1..input) {
-                item++
-                animals.add(Lions(enclosure = item, quantity = (1..12).random()))
-                animals.add(Zebres(enclosure = item, quantity = (1..12).random()))
-                animals.add(Ships(enclosure = item, quantity = (1..12).random()))
+        var item: Int = 0
+        for (i in 1..input) {
+            item++
+            randomAnimals.add(Lions(enclosure = item, quantity = (1..12).random()))
+            randomAnimals.add(Zebres(enclosure = item, quantity = (1..12).random()))
+            randomAnimals.add(Ships(enclosure = item, quantity = (1..12).random()))
 
-                animal.add(animals.random())
+            animal.add(randomAnimals.random())
 
-                animals.clear()
+            randomAnimals.clear()
 
-            }
-            var tv : TextView = generateImageView(context)
-            id = tv.id
-            tv.text = animal.toString()
-
-            binding.ll.addView(tv)
-            binding.tvPrintInvise.text = animal.toString()
         }
+        var tv: TextView = generateTextView(context)
+        tv.text = animal.toString()
 
+        binding.ll.addView(tv)
+    }
 
+    //логика перемещения еды в клетки
     fun moveEat(binding: ActivityMainBinding, context: Context) {
         binding.btnStart.text = "next"
 
-        // 20 + tttttt
         var food: String = binding.etCount.text.toString() + " " + binding.etFood.text.toString()
 
-        // index ====== 1
         var enclosure: Int = Integer.parseInt(binding.cletka.text.toString())
 
         for (i in animal) {
             if (i.enclosure == enclosure) {
-                animal[enclosure].food = food
+                i.food = food
                 break
             } else {
                 Toast.makeText(context, "такой клетки не существует", Toast.LENGTH_SHORT).show()
-                break
             }
         }
-        val tv : TextView = generateImageView(context)
+        var tv: TextView = generateTextView(context)
         binding.ll.removeAllViews()
         tv.text = animal.toString()
         binding.ll.addView(tv)
-        binding.tvPrintInvise.text = animal.toString()
-
-//        binding.ll.removeAllViews()
-//        binding.ll.addView(tv)
-//        tv.text.removeRange(0,Integer.parseInt(binding.etNumber.text.toString()))
     }
 
-    private fun generateImageView(context: Context): TextView {
+    private fun generateTextView(context: Context): TextView {
 
-        val imageView = TextView(context)
+        val textView = TextView(context)
 
         val params = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.MATCH_PARENT
         )
 
-        imageView.layoutParams = params
-        imageView.id = View.generateViewId()
-        return imageView
+        textView.layoutParams = params
+        textView.id = View.generateViewId()
+        return textView
     }
 }
